@@ -25,16 +25,21 @@ BINDIR = /usr/bin
 MANDIR = /usr/share/man
 ETCDIR = /etc
 
-VERSION = 5.40.10
+VERSION = 5.41.0
 NAME = pkgutils-$(VERSION)
 
 CXXFLAGS += -DNDEBUG
-CXXFLAGS += -O2 -Wall -pedantic -D_GNU_SOURCE -DVERSION=\"$(VERSION)\" \
-	    -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CXXFLAGS += -O2 -Wall -pedantic -D_GNU_SOURCE -DVERSION=\"$(VERSION)\"
+CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
-LIBARCHIVELIBS := $(shell pkg-config --libs libarchive)
-
-LDFLAGS += $(LIBARCHIVELIBS)
+# Check if STATIC is equal to true, if so, we will link statically
+ifeq ($(STATIC),true)
+LIBARCHIVE_LIBS := $(shell pkg-config --libs --static libarchive)
+LDFLAGS += -static $(LIBARCHIVE_LIBS)
+else
+LIBARCHIVE_LIBS := $(shell pkg-config --libs libarchive)
+LDFLAGS += $(LIBARCHIVE_LIBS)
+endif
 
 OBJECTS = main.o pkgutil.o pkgadd.o pkgrm.o pkginfo.o
 
