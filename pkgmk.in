@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-License-Identifier: GPL 
+# SPDX-License-Identifier: GPL-3.0-or-later 
 # Copyright (C) 2024 John Unland
 # Copyright (c) 2000-2005 Per Liden
 # Copyright (c) 2006-2021 by CRUX team (http://crux.nu)
