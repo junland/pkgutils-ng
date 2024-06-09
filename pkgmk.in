@@ -1,27 +1,10 @@
 #!/bin/bash
-#
-#  pkgutils
-#
-#  Copyright (c) 2000-2005 Per Liden
-#  Copyright (c) 2006-2021 by CRUX team (http://crux.nu)
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-#  USA.
-#
-
+# SPDX-License-Identifier: GPL 
+# Copyright (C) 2024 John Unland
+# Copyright (c) 2000-2005 Per Liden
+# Copyright (c) 2006-2021 by CRUX team (http://crux.nu)
 ##
+
 # error codes
 E_GENERAL=1
 E_PKGFILE=2    # invalid Pkgfile
@@ -209,7 +192,14 @@ unpack_source() {
 		[ -n "$RENAME" -a "$RENAME" != "SKIP" ] && LOCAL_FILE="$PKGMK_SOURCE_DIR/$RENAME"
 		case $LOCAL_FILE in
 			*.tar|*.tar.gz|*.tar.Z|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz|*.tar.lzma|*.tar.lz|*.zip|*.rpm|*.7z)
-				COMMAND="bsdtar -p -o -C $SRC -xf $LOCAL_FILE" ;;
+                # Make sure bsdtar command is available, otherwise use tar
+                if [ -x /usr/bin/bsdtar ]; then
+                    COMMAND="bsdtar -p -o -C $SRC -xf $LOCAL_FILE"
+                else
+                    warning "bsdtar not found, falling back to tar"
+                    COMMAND="tar -C $SRC -xf $LOCAL_FILE"
+                fi
+				;;
 			*)
 				COMMAND="cp $LOCAL_FILE $SRC" ;;
 		esac
@@ -557,7 +547,6 @@ remove_work_dir() {
 	rm -rf $PKGMK_WORK_DIR
 }
 
-
 build_package() {
 	local BUILD_SUCCESSFUL="no"
 	local COMPRESSION
@@ -573,8 +562,15 @@ build_package() {
 
 	unpack_source
 
+	info "Executing build instructions for '$TARGET'."
+
 	cd $SRC
 	(set -e -x ; build)
+
+	info "Executing install instructions for '$TARGET'."
+
+	cd $SRC
+	(set -e -x ; install)
 
 	if [ $? = 0 ]; then
 		if [ "$PKGMK_NO_STRIP" = "no" ]; then
