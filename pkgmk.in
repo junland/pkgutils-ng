@@ -619,12 +619,17 @@ build_package() {
 install_package() {
 	local COMMAND
 
+	# check if $PKGMK_INSTALL_ROOT is empty set to /
+	if [ -z "$PKGMK_INSTALL_ROOT" ]; then
+		PKGMK_INSTALL_ROOT="/"
+	fi
+
 	info "Installing '$TARGET'."
 
 	if [ "$PKGMK_INSTALL" = "install" ]; then
-		COMMAND="pkgadd $TARGET"
+		COMMAND="pkgadd --root $PKGMK_INSTALL_ROOT $TARGET "
 	else
-		COMMAND="pkgadd -u $TARGET"
+		COMMAND="pkgadd -u --root $PKGMK_INSTALL_ROOT $TARGET"
 	fi
 
 	cd $PKGMK_ROOT
