@@ -65,6 +65,9 @@ check_pkgfile() {
 	elif [ "`type -t build`" != "function" ]; then
 		error "Function 'build' not specified in $PKGMK_PKGFILE."
 		exit $E_PKGFILE
+	elif [ "`type -t install`" != "function" ]; then
+		error "Function 'install' not specified in $PKGMK_PKGFILE."
+		exit $E_PKGFILE
 	fi
 }
 
