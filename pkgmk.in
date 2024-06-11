@@ -572,6 +572,7 @@ build_package() {
 	trap "Something went wrong with '$_part'" EXIT
 
     for part in build install; do
+	    set -e
 		if [ "$part" = "build" ]; then
 		    _part="build"
 			cd $SRC
@@ -581,6 +582,7 @@ build_package() {
 			cd $SRC
 			install
 		fi
+		set +e
 	done
 
 	trap - EXIT
