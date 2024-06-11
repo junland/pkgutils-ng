@@ -565,25 +565,23 @@ build_package() {
 	info "Building package of '$TARGET'."
 
 	unpack_source
-
-	# Create trap if the build exits prematurely
-	trap "died '$_part'" EXIT
+	
 
     for part in build install; do
+	    trap "died '$part'" EXIT
 	    set -e
 		if [ "$part" = "build" ]; then
-		    _part="build"
 			cd $SRC
 			build
 		else
-		    _part="build"
 			cd $SRC
 			install
 		fi
 		set +e
+		trap - EXIT
 	done
 
-	trap - EXIT
+
 
 	if [ $? = 0 ]; then
 		if [ "$PKGMK_NO_STRIP" = "no" ]; then
