@@ -569,12 +569,12 @@ build_package() {
 	info "Executing build instructions for '$TARGET'."
 
 	cd $SRC
-	(set -e -x ; build) || exit $E_BUILD
+	set -e -x ; build || exit $E_BUILD
 
 	info "Executing install instructions for '$TARGET'."
 
 	cd $SRC
-	(set -e -x ; install) || exit $E_INSTALL
+	set -e -x ; install || exit $E_INSTALL
 
 	if [ $? = 0 ]; then
 		if [ "$PKGMK_NO_STRIP" = "no" ]; then
