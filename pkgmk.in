@@ -6,16 +6,17 @@
 ##
 
 # error codes
-E_GENERAL=1
-E_PKGFILE=2    # invalid Pkgfile
-E_DIR_PERM=3   # (source/build) directory missing or missing read/write permission
-E_DOWNLOAD=4   # error during download
-E_UNPACK=5     # error during unpacking of source file(s)
-E_MD5=6        # md5sum verification failed
-E_FOOTPRINT=7  # footprint check failure
-E_BUILD=8      # error while running 'build()'
-E_INSTALL=9    # error while installing the package via 'pkgadd'
-E_SIGNATURE=10 # error verifying the signature
+E_GENERAL=1     # general error
+E_PKGFILE=2     # invalid Pkgfile
+E_DIR_PERM=3    # (source/build) directory missing or missing read/write permission
+E_DOWNLOAD=4    # error during download
+E_UNPACK=5      # error during unpacking of source file(s)
+E_MD5=6         # md5sum verification failed
+E_FOOTPRINT=7   # footprint check failure
+E_BUILD=8       # error while running 'build()'
+E_INSTALL=9	    # error while installing the package via 'pkgadd'
+E_INSTALL=10    # error while installing the package via 'pkgadd'
+E_SIGNATURE=11  # error verifying the signature
 
 info() {
 	echo "=======> $1"
@@ -568,12 +569,12 @@ build_package() {
 	info "Executing build instructions for '$TARGET'."
 
 	cd $SRC
-	(set -e -x ; build)
+	(set -e -x ; build) || exit $E_BUILD
 
 	info "Executing install instructions for '$TARGET'."
 
 	cd $SRC
-	(set -e -x ; install)
+	(set -e -x ; install) || exit $E_INSTALL
 
 	if [ $? = 0 ]; then
 		if [ "$PKGMK_NO_STRIP" = "no" ]; then
