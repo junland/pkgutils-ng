@@ -569,7 +569,7 @@ build_package() {
 	local _part
 
 	# Create trap if the build exits prematurely
-	trap "Something went wrong with '$_part'" EXIT
+	trap "died '$_part'" EXIT
 
     for part in build install; do
 	    set -e
